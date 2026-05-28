@@ -1,12 +1,14 @@
 import { scene, camera, renderer } from "./scene/setup.js";
 import { createLights } from "./scene/lights.js";
-import { createGround } from "./scene/ground.js";
 import { Player } from "./entities/Player.js";
 import { InputManager } from "./systems/InputManager.js";
 import { CameraFollow } from "./systems/CameraFollow.js";
+import { WorldGenerator } from "./systems/WorldGenerator.js";
 
 createLights(scene);
-createGround(scene);
+
+const world = new WorldGenerator(scene);
+world.generate();
 
 const player = new Player();
 scene.add(player.mesh);
