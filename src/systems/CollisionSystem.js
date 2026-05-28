@@ -1,6 +1,3 @@
-const P_HALF = { x: 0.4, z: 0.4 };
-const V_HALF = { x: 0.4, z: 0.3 };
-
 export class CollisionSystem {
   constructor(gameState) {
     this.gameState = gameState;
@@ -14,8 +11,8 @@ export class CollisionSystem {
 
     for (const v of vehicles) {
       if (
-        Math.abs(px - v.x) < P_HALF.x + V_HALF.x &&
-        Math.abs(pz - v.z) < P_HALF.z + V_HALF.z
+        Math.abs(px - v.x) < player.halfX + v.halfX &&
+        Math.abs(pz - v.z) < player.halfZ + v.halfZ
       ) {
         this.gameState.die();
         return;

@@ -7,23 +7,14 @@ import { WorldGenerator } from "./systems/WorldGenerator.js";
 import { TrafficSystem } from "./systems/TrafficSystem.js";
 import { GameState } from "./systems/GameState.js";
 import { CollisionSystem } from "./systems/CollisionSystem.js";
+import { AssetLoader } from "./systems/AssetLoader.js";
 
-createLights(scene);
-
-const world = new WorldGenerator(scene);
-world.generate();
-
-const traffic = new TrafficSystem(scene, world.lanes);
-
-const player = new Player();
-scene.add(player.mesh);
-
-const input = new InputManager();
-const cameraFollow = new CameraFollow(camera);
-const gameState = new GameState();
-const collision = new CollisionSystem(gameState);
-
-let lastTime = performance.now();
+let player;
+let traffic;
+let input;
+let cameraFollow;
+let gameState;
+let collision;
 
 function animate(time) {
   const dt = time - lastTime;
@@ -45,14 +36,6 @@ function animate(time) {
   requestAnimationFrame(animate);
 }
 
-requestAnimationFrame(animate);
-
-addEventListener("resize", () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-});
-
 function restart() {
   gameState.restart();
   player.reset();
@@ -60,8 +43,42 @@ function restart() {
   cameraFollow.reset(player);
 }
 
+let lastTime;
+
+async function init() {
+  createLights(scene);
+
+  const world = new WorldGenerator(scene);
+  world.generate();
+
+  const assetLoader = new AssetLoader();
+  const models = await assetLoader.loadAll();
+
+  player = new Player(models.dog);
+  scene.add(player.mesh);
+
+  const vehicleModels = [models.sedan, models.truck, models.van];
+  traffic = new TrafficSystem(scene, world.lanes, vehicleModels);
+
+  input = new InputManager();
+  cameraFollow = new CameraFollow(camera);
+  gameState = new GameState();
+  collision = new CollisionSystem(gameState);
+
+  lastTime = performance.now();
+  requestAnimationFrame(animate);
+}
+
+init();
+
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
 addEventListener("keydown", (e) => {
-  if (e.code === "KeyR" && !gameState.isPlaying) {
+  if (e.code === "KeyR" && gameState && !gameState.isPlaying) {
     e.preventDefault();
     restart();
   }

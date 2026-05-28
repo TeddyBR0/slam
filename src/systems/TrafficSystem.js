@@ -1,13 +1,13 @@
 import { Vehicle } from "../entities/Vehicle.js";
 
-const COLORS = [0xe74c3c, 0x3498db, 0xf39c12, 0x2ecc71, 0x9b59b6, 0x1abc9c];
 const BOUNDARY = 8;
 const SPAWN_X = 7;
 
 export class TrafficSystem {
-  constructor(scene, lanes) {
+  constructor(scene, lanes, vehicleModels) {
     this.scene = scene;
     this.vehicles = [];
+    this.vehicleModels = vehicleModels;
     this.laneConfigs = [];
 
     for (const lane of lanes) {
@@ -42,8 +42,8 @@ export class TrafficSystem {
   }
 
   _spawnOne(x, cfg) {
-    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    const v = new Vehicle(x, cfg.z, cfg.speed, cfg.direction, color);
+    const model = this.vehicleModels[Math.floor(Math.random() * this.vehicleModels.length)];
+    const v = new Vehicle(x, cfg.z, cfg.speed, cfg.direction, model);
     this.scene.add(v.mesh);
     this.vehicles.push(v);
   }

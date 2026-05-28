@@ -1,17 +1,27 @@
-import { BoxGeometry, MeshStandardMaterial, Mesh } from "three";
+import { Group, Box3 } from "three";
+
+const SCALE = 0.55;
 
 export class Vehicle {
-  constructor(x, z, speed, direction, color) {
+  constructor(x, z, speed, direction, model) {
     this.x = x;
     this.z = z;
     this.speed = speed;
     this.direction = direction;
 
-    const geo = new BoxGeometry(0.8, 0.3, 0.6);
-    const mat = new MeshStandardMaterial({ color });
-    this.mesh = new Mesh(geo, mat);
-    this.mesh.position.set(x, 0.15, z);
-    this.mesh.castShadow = true;
+    this.mesh = new Group();
+
+    const clone = model.clone(true);
+    clone.scale.setScalar(SCALE);
+    clone.rotation.y = direction === 1 ? Math.PI / 2 : -Math.PI / 2;
+    clone.castShadow = true;
+    this.mesh.add(clone);
+
+    const box = new Box3().setFromObject(this.mesh);
+    this.halfX = (box.max.x - box.min.x) / 2;
+    this.halfZ = (box.max.z - box.min.z) / 2;
+
+    this.mesh.position.set(x, 0, z);
   }
 
   update(dt) {
