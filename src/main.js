@@ -8,6 +8,7 @@ import { TrafficSystem } from "./systems/TrafficSystem.js";
 import { GameState } from "./systems/GameState.js";
 import { CollisionSystem } from "./systems/CollisionSystem.js";
 import { AssetLoader } from "./systems/AssetLoader.js";
+import { WorldDecorator } from "./systems/WorldDecorator.js";
 
 let player;
 let traffic;
@@ -52,7 +53,13 @@ async function init() {
   world.generate();
 
   const assetLoader = new AssetLoader();
-  const models = await assetLoader.loadAll();
+  const [models, decorationModels] = await Promise.all([
+    assetLoader.loadAll(),
+    assetLoader.loadDecorations(),
+  ]);
+
+  const decorator = new WorldDecorator(scene, world.lanes, decorationModels);
+  decorator.decorate();
 
   player = new Player(models.dog);
   scene.add(player.mesh);

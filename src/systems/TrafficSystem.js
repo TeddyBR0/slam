@@ -1,7 +1,7 @@
 import { Vehicle } from "../entities/Vehicle.js";
 
-const BOUNDARY = 8;
-const SPAWN_X = 7;
+const BOUNDARY = 10;
+const SPAWN_X = 9;
 
 export class TrafficSystem {
   constructor(scene, lanes, vehicleModels) {

@@ -1,6 +1,6 @@
 import { PlaneGeometry, MeshStandardMaterial, Mesh } from "three";
 
-const WIDTH = 12;
+const WIDTH = 16;
 const COLORS = {
   grass: 0x7ec850,
   road: 0x666666,
