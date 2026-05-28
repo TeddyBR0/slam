@@ -57,6 +57,17 @@ export class TrafficSystem {
     return true;
   }
 
+  reset() {
+    for (const v of this.vehicles) {
+      this.scene.remove(v.mesh);
+    }
+    this.vehicles = [];
+    for (const cfg of this.laneConfigs) {
+      cfg.timer = Math.random() * 2;
+    }
+    this._spawnInitial();
+  }
+
   update(dt) {
     for (let i = this.vehicles.length - 1; i >= 0; i--) {
       const v = this.vehicles[i];

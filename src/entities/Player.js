@@ -53,6 +53,18 @@ export class Player {
     this.mesh.position.set(x, y, z);
   }
 
+  reset() {
+    this.gridX = 0;
+    this.gridZ = 0;
+    this.isMoving = false;
+    this._progress = 0;
+    this._fromX = 0;
+    this._fromZ = 0;
+    this._dx = 0;
+    this._dz = 0;
+    this.mesh.position.set(0, 0.4, 0);
+  }
+
   get worldX() {
     return this.mesh.position.x;
   }

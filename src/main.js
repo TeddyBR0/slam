@@ -5,6 +5,8 @@ import { InputManager } from "./systems/InputManager.js";
 import { CameraFollow } from "./systems/CameraFollow.js";
 import { WorldGenerator } from "./systems/WorldGenerator.js";
 import { TrafficSystem } from "./systems/TrafficSystem.js";
+import { GameState } from "./systems/GameState.js";
+import { CollisionSystem } from "./systems/CollisionSystem.js";
 
 createLights(scene);
 
@@ -18,6 +20,8 @@ scene.add(player.mesh);
 
 const input = new InputManager();
 const cameraFollow = new CameraFollow(camera);
+const gameState = new GameState();
+const collision = new CollisionSystem(gameState);
 
 let lastTime = performance.now();
 
@@ -25,13 +29,16 @@ function animate(time) {
   const dt = time - lastTime;
   lastTime = time;
 
-  const dir = input.consumeDirection();
-  if (dir) {
-    player.startHop(dir.x, dir.z);
+  if (gameState.isPlaying) {
+    const dir = input.consumeDirection();
+    if (dir) {
+      player.startHop(dir.x, dir.z);
+    }
   }
 
   player.update(dt);
   traffic.update(dt);
+  collision.check(player, traffic.vehicles);
   cameraFollow.update(player);
 
   renderer.render(scene, camera);
@@ -44,4 +51,18 @@ addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
+});
+
+function restart() {
+  gameState.restart();
+  player.reset();
+  traffic.reset();
+  cameraFollow.reset(player);
+}
+
+addEventListener("keydown", (e) => {
+  if (e.code === "KeyR" && !gameState.isPlaying) {
+    e.preventDefault();
+    restart();
+  }
 });
